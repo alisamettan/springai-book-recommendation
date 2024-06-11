@@ -5,7 +5,6 @@ import com.patika.book_recommendation.dto.BookRequest;
 import com.patika.book_recommendation.service.PromptService;
 
 import org.springframework.ai.chat.ChatClient;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 
