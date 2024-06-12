@@ -10,8 +10,9 @@ interface QuestionContextType {
   submitResponses: () => void;
 }
 
-export interface favBooks {
+export interface Book {
   name: string;
+  description: string;
 }
 
 export const QuestionContext = createContext<QuestionContextType | any>(
@@ -25,9 +26,9 @@ const QuestionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     "Hangi yazarın kitabı olsun?",
   ]);
   const [answers, setAnswers] = useState<any>(["", "", ""]);
-  const [response, setResponse] = useState<string>("");
+  const [response, setResponse] = useState<Book>({ name: "", description: "" });
 
-  const [favBook, setFavBook] = useState<Array<favBooks>>([]);
+  const [favBook, setFavBook] = useState<Array<Book>>([]);
   const [start, setStart] = useState<Boolean>(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [inputValue, setInputValue] = useState<string>("");
@@ -62,11 +63,14 @@ const QuestionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const handleReset = () => {
     setCurrentQuestionIndex(0);
     setAnswers([]);
-    setResponse("");
+    setResponse({ name: "", description: "" });
   };
 
   const addFav = () => {
-    setFavBook((prev) => [...prev, { name: response }]);
+    setFavBook((prev) => [
+      ...prev,
+      { name: response.name, description: response.description },
+    ]);
     console.log(favBook);
   };
 

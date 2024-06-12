@@ -25,10 +25,19 @@ const Main = () => {
   return (
     <div className="bg-gray-400 w-full h-screen">
       <div className="flex flex-col items-center h-full justify-between pb-4">
-        {response ? (
-          <div>
-            <p>{response}</p>
-            <div className="flex gap-2">
+        {response.name ? (
+          <div className="flex flex-col items-center justify-center m-auto gap-4 border-2 border-gray-300 py-4 px-4 rounded-lg bg-blue-200 shadow-2xl">
+            <div className="flex flex-col gap-2 justify-center">
+              <div className="flex items-center gap-4">
+                <p className="text-2xl text-red-300">Name:</p>
+                <p className="text-2xl">{response.name}</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <p className="text-2axl text-red-300">Description:</p>
+                <p className="text-2xl">{response.description}</p>
+              </div>
+            </div>
+            <div className="flex gap-2 w-[30%] justify-between">
               <button
                 className="py-2 px-4 bg-gray-500 rounded-md mt-3"
                 onClick={handleReset}

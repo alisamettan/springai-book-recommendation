@@ -1,5 +1,5 @@
 "use client";
-import { QuestionContext, favBooks } from "@/context/questioncontext";
+import { QuestionContext, Book } from "@/context/questioncontext";
 import { useContext, useEffect, useState } from "react";
 import { IoPencil } from "react-icons/io5";
 import { MdMenuOpen } from "react-icons/md";
@@ -31,11 +31,11 @@ const SideBar = () => {
           </div>
           <ul className="flex flex-col">
             {favBook &&
-              favBook.map((book: favBooks, index: any) => {
+              favBook.map((book: Book, index: any) => {
                 return (
                   <li
                     key={index}
-                    className="border-2 border-black rounded-md py-1 px-2"
+                    className="border-2 border-gray-400 rounded-lg bg-blue-200 shadow-2xl py-4 px-2  w-[90%] m-auto flex items-center justify-center"
                   >
                     {book.name}
                   </li>
