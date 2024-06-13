@@ -33,7 +33,7 @@ const Main = () => {
                 <p className="text-2xl">{response.name}</p>
               </div>
               <div className="flex items-center gap-4">
-                <p className="text-2axl text-red-300">Description:</p>
+                <p className="text-2xl text-red-300">Description:</p>
                 <p className="text-2xl">{response.description}</p>
               </div>
             </div>

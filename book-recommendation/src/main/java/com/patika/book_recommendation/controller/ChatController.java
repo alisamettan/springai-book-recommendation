@@ -14,6 +14,8 @@ import org.springframework.ai.parser.BeanOutputParser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @RestController
@@ -26,23 +28,40 @@ public class ChatController {
 
     @CrossOrigin
     @PostMapping
-    public Object generate(@RequestBody BookRequest bookRequest){
-
+    public Book generate(@RequestBody BookRequest bookRequest) {
 
         String promptMessage = """
-                Bana %s'a benzer, %s turunde %s isimli yazarin yazdigi bir kitabi aciklamasiyla oner.
-                {format}""";
-        promptMessage = String.format(promptMessage, bookRequest.getFavBook(), bookRequest.getGenre(), bookRequest.getAuthor());
+                Suggest me a new book similar to %s with an explanation why, this new book that you will suggest should be by this author %s and in this genre %s in Turkish description.
+                Format:
+                name: <book_name>
+                description: <book_description>
+                """;
+        promptMessage = String.format(promptMessage, bookRequest.getFavBook(), bookRequest.getAuthor(), bookRequest.getGenre());
 
-        BeanOutputParser outputParser=new BeanOutputParser<>(Book.class);
+        PromptTemplate promptTemplate = new PromptTemplate(promptMessage, Map.of());
+        Prompt prompt = promptTemplate.create();
+        Generation generation = chatClient.call(prompt).getResult();
 
-        String format=outputParser.getFormat();
+        // Dönen cevabı manuel olarak parse edelim
+        String response = generation.getOutput().getContent();
+        return parseResponse(response);
+    }
 
+    private Book parseResponse(String response) {
+        Pattern namePattern = Pattern.compile("name: (.*)");
+        Pattern descriptionPattern = Pattern.compile("description: (.*)");
 
-        PromptTemplate promptTemplate=new PromptTemplate(promptMessage,Map.of("format",format));
-        Prompt prompt=promptTemplate.create();
-        Generation generation=chatClient.call(prompt).getResult();
-        return  outputParser.parse(generation.getOutput().getContent());
+        Matcher nameMatcher = namePattern.matcher(response);
+        Matcher descriptionMatcher = descriptionPattern.matcher(response);
 
+        Book book = new Book();
+        if (nameMatcher.find()) {
+            book.setName(nameMatcher.group(1).trim());
+        }
+        if (descriptionMatcher.find()) {
+            book.setDescription(descriptionMatcher.group(1).trim());
+        }
+
+        return book;
     }
 }
