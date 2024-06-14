@@ -1,7 +1,7 @@
 package com.patika.book_recommendation.controller;
 
 
-import com.patika.book_recommendation.dto.BookRequest;
+import com.patika.book_recommendation.dto.ChatRequest;
 import com.patika.book_recommendation.model.Book;
 
 
@@ -10,7 +10,6 @@ import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.chat.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.parser.BeanOutputParser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,7 +27,7 @@ public class ChatController {
 
     @CrossOrigin
     @PostMapping
-    public Book generate(@RequestBody BookRequest bookRequest) {
+    public Book generate(@RequestBody ChatRequest chatRequest) {
 
         String promptMessage = """
                 Suggest me a new book similar to %s with an explanation why, this new book that you will suggest should be by this author %s and in this genre %s in Turkish description.
@@ -36,7 +35,7 @@ public class ChatController {
                 name: <book_name>
                 description: <book_description>
                 """;
-        promptMessage = String.format(promptMessage, bookRequest.getFavBook(), bookRequest.getAuthor(), bookRequest.getGenre());
+        promptMessage = String.format(promptMessage, chatRequest.getFavBook(), chatRequest.getAuthor(), chatRequest.getGenre());
 
         PromptTemplate promptTemplate = new PromptTemplate(promptMessage, Map.of());
         Prompt prompt = promptTemplate.create();
