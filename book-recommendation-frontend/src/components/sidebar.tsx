@@ -1,12 +1,14 @@
 "use client";
 import { QuestionContext, Book } from "@/context/questioncontext";
+import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { IoPencil } from "react-icons/io5";
+import { IoPencil, IoSearch } from "react-icons/io5";
 import { MdMenuOpen } from "react-icons/md";
 
 const SideBar = () => {
-  let books: any = [];
-  const { favBook, addFav } = useContext(QuestionContext);
+  const id = localStorage.getItem("id");
+  const { favBook, setFavBook, handleSearchOnGoogle } =
+    useContext(QuestionContext);
 
   const [open, setOpen] = useState<boolean>(true);
 
@@ -16,10 +18,16 @@ const SideBar = () => {
     console.log(favBook);
   };
 
-  // useEffect(() => {
-  //   favBook;
-  //   console.log(favBook);
-  // }, [favBook]);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/favBook/${id}`)
+      .then((res) => {
+        setFavBook(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   return (
     <>
@@ -29,15 +37,19 @@ const SideBar = () => {
             <MdMenuOpen onClick={handleToggle} className="w-8 h-8 block" />
             <IoPencil className="w-8 h-8 block" />
           </div>
-          <ul className="flex flex-col">
+          <ul className="flex flex-col gap-4">
             {favBook &&
               favBook.map((book: Book, index: any) => {
                 return (
                   <li
                     key={index}
-                    className="border-2 border-gray-400 rounded-lg bg-blue-200 shadow-2xl py-4 px-2  w-[90%] m-auto flex items-center justify-center"
+                    className="border-2 border-gray-400 rounded-lg bg-blue-200 shadow-2xl py-4 px-2  w-[90%] m-auto flex justify-between"
                   >
-                    {book.name}
+                    <span>{book.name}</span>
+                    <IoSearch
+                      className="w-6 h-6 cursor-pointer"
+                      onClick={() => handleSearchOnGoogle(book.name)}
+                    />
                   </li>
                 );
               })}

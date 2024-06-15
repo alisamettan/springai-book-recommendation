@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { FC, ReactNode, createContext, useState } from "react";
+import { FC, ReactNode, createContext, useEffect, useState } from "react";
 
 interface QuestionContextType {
   questions: string[];
@@ -20,6 +20,7 @@ export const QuestionContext = createContext<QuestionContextType | any>(
 );
 
 const QuestionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [id, setId] = useState<string | null>(localStorage.getItem("id"));
   const [questions] = useState<string[]>([
     "Favori kitabın nedir?",
     "Hangi türde kitap önerisi almak istersin?",
@@ -52,7 +53,11 @@ const QuestionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       axios
         .post("http://localhost:8080/book", answersObject)
         .then((res) => {
-          setResponse(res.data);
+          console.log(res.data);
+          setResponse({
+            name: res.data.name,
+            description: res.data.description,
+          });
           setLoading(false);
           console.log(response);
         })
@@ -66,12 +71,38 @@ const QuestionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setResponse({ name: "", description: "" });
   };
 
+  const loadFavBooks = () => {
+    axios
+      .get(`http://localhost:8080/favBook/${id}`)
+      .then((res) => {
+        setFavBook(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   const addFav = () => {
-    setFavBook((prev) => [
-      ...prev,
-      { name: response.name, description: response.description },
-    ]);
-    console.log(favBook);
+    console.log(response);
+
+    axios
+      .post("http://localhost:8080/favBook", response, {
+        params: { id: id },
+      })
+      .then((res) => {
+        console.log(res.data);
+
+        loadFavBooks();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const handleSearchOnGoogle = (bookName: string) => {
+    const searchQuery = encodeURIComponent(`"${bookName}"`);
+    const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
+    window.open(googleSearchUrl, "_blank");
   };
 
   return (
@@ -92,6 +123,9 @@ const QuestionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setInputValue,
         addFav,
         favBook,
+        setFavBook,
+        loadFavBooks,
+        handleSearchOnGoogle,
       }}
     >
       {children}

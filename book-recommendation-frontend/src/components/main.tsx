@@ -1,12 +1,16 @@
 "use client";
 
 import { QuestionContext } from "@/context/questioncontext";
+import { UserContext } from "@/context/usercontext";
 import { InputAdornment, TextField } from "@mui/material";
 import { useContext, useState } from "react";
+import { CiLogout } from "react-icons/ci";
 import { IoMdSend } from "react-icons/io";
+import { IoSearch } from "react-icons/io5";
 
 const Main = () => {
-  const context = useContext(QuestionContext);
+  const questionContext = useContext(QuestionContext);
+  const userContext = useContext(UserContext);
   const {
     questions,
     response,
@@ -20,10 +24,16 @@ const Main = () => {
     inputValue,
     setInputValue,
     addFav,
-  } = context;
+    handleSearchOnGoogle,
+  } = questionContext;
+  const { logout } = userContext;
 
   return (
     <div className="bg-gray-400 w-full h-screen">
+      <CiLogout
+        onClick={logout}
+        className="absolute top-4 right-4 h-10 w-10 cursor-pointer"
+      />
       <div className="flex flex-col items-center h-full justify-between pb-4">
         {response.name ? (
           <div className="flex flex-col items-center justify-center m-auto w-[70%] gap-4 border-2 border-gray-300 py-4 px-4 rounded-lg bg-blue-200 shadow-2xl">
@@ -31,6 +41,10 @@ const Main = () => {
               <div className="flex gap-4">
                 <p className="text-2xl text-red-300">Suggested Book:</p>
                 <p className="text-2xl">{response.name}</p>
+                <IoSearch
+                  className="w-6 h-6 cursor-pointer"
+                  onClick={() => handleSearchOnGoogle(response.name)}
+                />
               </div>
               <div className="flex gap-4">
                 <p className="text-2xl text-red-300">Description:</p>
