@@ -25,7 +25,6 @@ public class ChatController {
     private final ChatClient chatClient;
 
 
-    @CrossOrigin
     @PostMapping
     public Book generate(@RequestBody ChatRequest chatRequest) {
 
